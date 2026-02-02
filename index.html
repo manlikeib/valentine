@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Be My Valentine?</title>
+  <meta name="theme-color" content="#0b0b10" />
+  <style>
+    :root{
+      --bg1:#0b0b10;
+      --bg2:#1a0f1f;
+      --card: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --accent:#ff4d7d;
+      --accent2:#7c4dff;
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --radius: 22px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(255,77,125,.22), transparent 55%),
+        radial-gradient(900px 600px at 80% 30%, rgba(124,77,255,.18), transparent 55%),
+        radial-gradient(900px 600px at 50% 90%, rgba(255,255,255,.08), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+    }
+
+    .glow{
+      position:absolute;
+      inset:-200px;
+      background: conic-gradient(from 180deg, rgba(255,77,125,.16), rgba(124,77,255,.16), rgba(255,77,125,.16));
+      filter: blur(90px);
+      opacity:.55;
+      animation: spin 18s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    .wrap{
+      width:min(560px, calc(100% - 28px));
+      position:relative;
+      z-index:2;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 26px 22px;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      color:var(--muted);
+      font-size: 13px;
+      letter-spacing:.2px;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(255,77,125,.45);
+    }
+
+    h1{
+      margin:18px 0 10px;
+      font-size: 34px;
+      line-height:1.1;
+      letter-spacing:-.6px;
+    }
+
+    p{
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height:1.55;
+    }
+
+    .details{
+      margin-top:18px;
+      padding:14px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      display:grid;
+      gap:10px;
+    }
+    .row{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .icon{
+      width:36px;height:36px;border-radius:12px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      flex: 0 0 auto;
+    }
+    .row b{ color: var(--text); font-weight:650; }
+    .row span{ color: var(--muted); }
+
+    .actions{
+      margin-top:20px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    button{
+      appearance:none;
+      border:0;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-weight: 700;
+      letter-spacing:.2px;
+      cursor:pointer;
+      flex: 1 1 180px;
+      min-width: 160px;
+      transition: transform .12s ease, filter .12s ease;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+    .yes{
+      color:#0b0b10;
+      background: linear-gradient(135deg, #ff5b87, #ffcfdf);
+      box-shadow: 0 14px 40px rgba(255,77,125,.22);
+    }
+    .maybe{
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .tiny{
+      margin-top:12px;
+      font-size: 13px;
+      color: rgba(255,255,255,.62);
+      text-align:center;
+    }
+
+    .view{
+      display:none;
+      text-align:center;
+      padding: 34px 22px;
+    }
+    .view.active{ display:block; }
+
+    .big{
+      font-size: 40px;
+      margin: 4px 0 10px;
+      letter-spacing:-.6px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    a.cta{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      text-decoration:none;
+      font-weight: 750;
+      color:#0b0b10;
+      background: linear-gradient(135deg, #7c4dff, #d9ccff);
+      box-shadow: 0 14px 40px rgba(124,77,255,.18);
+      width: min(340px, 100%);
+    }
+
+    canvas#confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 3;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .glow{ animation:none; }
+      button{ transition:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="glow"></div>
+  <canvas id="confetti"></canvas>
+
+  <div class="wrap">
+    <!-- MAIN CARD -->
+    <div class="card" id="card">
+      <div id="main" class="view active">
+        <div class="badge"><span class="dot"></span> A small question for you</div>
+        <h1>Will you be my Valentine?</h1>
+        <p>
+          I planned something for Valentine’s:
+          <br/>
+          <b>a little spa</b>, <b>good food</b>, and <b>time together</b>.
+        </p>
+
+        <div class="details">
+          <div class="row">
+            <div class="icon">🧖‍♀️</div>
+            <div>
+              <b>Spa + relax</b><br/>
+              <span>Soft reset. No stress. Just us.</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="icon">🍽️</div>
+            <div>
+              <b>Dinner</b><br/>
+              <span>Good food and even better company.</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="icon">✨</div>
+            <div>
+              <b>My favorite part</b><br/>
+              <span>Spending the evening with you.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="yes" id="yesBtn">Yes 💘</button>
+          <button class="maybe" id="maybeBtn">Let me think…</button>
+        </div>
+
+        <div class="tiny">Made with a little courage (and good taste).</div>
+      </div>
+
+      <!-- YES VIEW -->
+      <div id="yes" class="view">
+        <div class="big">Yesss 💞</div>
+        <p>
+          Okay, you just made my day.<br/>
+          I’ll take care of everything — you just show up and look cute.
+        </p>
+        <div class="pill">🗓️ Valentine’s plan: spa + dinner + us</div>
+
+        <!-- Replace the phone number below with YOUR number (international format) -->
+        <a class="cta" id="textLink" href="sms:+46700000000?&body=Yes%20%F0%9F%92%98%20I%27ll%20be%20your%20Valentine.%20%F0%9F%98%8A">
+          Text you 💬
+        </a>
+
+        <div class="tiny" style="margin-top:14px;">(If the button doesn’t work, just text me “Yes”.)</div>
+      </div>
+
+      <!-- MAYBE VIEW -->
+      <div id="maybe" class="view">
+        <div class="big">Fair 😄</div>
+        <p>
+          Take your time.<br/>
+          But just so you know… I’ll still be smiling if you say yes.
+        </p>
+        <div class="actions" style="margin-top:18px;">
+          <button class="yes" id="okYesBtn">Okay… yes 💘</button>
+          <button class="maybe" id="backBtn">Back</button>
+        </div>
+        <div class="tiny">No pressure. Just vibes.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple view switcher
+    const mainView = document.getElementById('main');
+    const yesView  = document.getElementById('yes');
+    const maybeView= document.getElementById('maybe');
+
+    const yesBtn   = document.getElementById('yesBtn');
+    const maybeBtn = document.getElementById('maybeBtn');
+    const backBtn  = document.getElementById('backBtn');
+    const okYesBtn = document.getElementById('okYesBtn');
+
+    function show(view){
+      [mainView, yesView, maybeView].forEach(v => v.classList.remove('active'));
+      view.classList.add('active');
+    }
+
+    yesBtn.addEventListener('click', () => {
+      show(yesView);
+      burstConfetti();
+    });
+
+    okYesBtn.addEventListener('click', () => {
+      show(yesView);
+      burstConfetti();
+    });
+
+    maybeBtn.addEventListener('click', () => show(maybeView));
+    backBtn.addEventListener('click', () => show(mainView));
+
+    // Tiny confetti (no libraries)
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let confetti = [];
+    let raf = null;
+
+    function resize(){
+      canvas.width = window.innerWidth * devicePixelRatio;
+      canvas.height = window.innerHeight * devicePixelRatio;
+      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function burstConfetti(){
+      confetti = [];
+      const colors = ['#ff4d7d', '#ffd1dc', '#7c4dff', '#ffffff', '#ff9ab6'];
+      const count = 160;
+
+      for(let i=0;i<count;i++){
+        confetti.push({
+          x: window.innerWidth * (0.2 + Math.random()*0.6),
+          y: window.innerHeight * 0.25,
+          vx: (Math.random()-0.5) * 8,
+          vy: Math.random() * -8 - 6,
+          g: 0.22 + Math.random()*0.18,
+          r: 2 + Math.random()*4,
+          a: 1,
+          rot: Math.random()*Math.PI,
+          vr: (Math.random()-0.5)*0.3,
+          c: colors[Math.floor(Math.random()*colors.length)]
+        });
+      }
+
+      if(raf) cancelAnimationFrame(raf);
+      tick();
+      setTimeout(() => { confetti = []; }, 2200);
+    }
+
+    function tick(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      confetti.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.g;
+        p.rot += p.vr;
+        p.a -= 0.008;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(p.a, 0);
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.r, -p.r, p.r*2.2, p.r*1.4);
+        ctx.restore();
+      });
+
+      confetti = confetti.filter(p => p.a > 0 && p.y < window.innerHeight + 60);
+      raf = requestAnimationFrame(tick);
+    }
+  </script>
+</body>
+</html>
